@@ -9,3 +9,10 @@
 ## Задача 2
 Вывести данные /etc/protocols в отформатированном и отсортированном порядке для 5 наибольших портов.  
 <img width="589" height="93" alt="задача 2" src="https://github.com/user-attachments/assets/3b2a07c9-4720-484e-b911-9cf7760048ad" />
+
+## Задача 3
+Написать программу banner средствами bash для вывода текстов, как в следующем примере (размер баннера должен меняться!).  
+<img width="847" height="183" alt="задача 3 (1)" src="https://github.com/user-attachments/assets/dea7bfdf-000b-40a4-9a2d-d7e9cd81c3c7" />  
+<img width="274" height="78" alt="задача 3 (2)" src="https://github.com/user-attachments/assets/1e61aadb-37cf-4eb9-999e-dc77a31b4900" />
+
+## Задача 4
