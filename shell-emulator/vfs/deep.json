@@ -1,0 +1,20 @@
+{
+  "home": {
+    "user": {
+      "projects": {
+        "emulator": {
+          "main.cpp": "aW50IG1haW4oKSB7fQo=",
+          "src": {
+            "util.h": "I3ByYWdtYSBvbmNlCg=="
+          }
+        },
+        "todo.txt": "LSB3cml0ZSB0ZXN0cwo="
+      },
+      ".bashrc": "ZXhwb3J0IFBTMT0nJCAnCg=="
+    }
+  },
+  "etc": {
+    "hosts": "MTI3LjAuMC4xIGxvY2FsaG9zdAo="
+  },
+  "tmp": {}
+}
