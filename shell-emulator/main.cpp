@@ -9,6 +9,8 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <stdexcept>
 #include <string>
 #include <vector>
 using namespace std;
@@ -18,6 +20,15 @@ Fl_Text_Display* disp;
 Fl_Text_Buffer* buf;
 Fl_Input* input;
 
+// Узел VFS: папка (JSON-объект) или файл (JSON-строка, данные в base64)
+struct Node {
+    bool isDir;
+    map<string, Node> kids;
+    string data;
+};
+
+Node root{true};
+vector<string> cwd;  // текущий путь от корня
 string vfsName = "default";
 
 // Вывод строки в окно (и в консоль)
@@ -28,7 +39,100 @@ void print(const string& s) {
     cout << s << endl;
 }
 
-string prompt() { return "user@" + vfsName + ":~$ "; }
+string pathStr(const vector<string>& p) {
+    string s;
+    for (auto& x : p) s += "/" + x;
+    return s.empty() ? "/" : s;
+}
+
+string prompt() { return "user@" + vfsName + ":" + pathStr(cwd) + "$ "; }
+
+// Мини-парсер JSON: поддерживает только объекты (папки) и строки (файлы)
+struct JsonParser {
+    const string& s;
+    size_t i = 0;
+
+    char peek() {
+        while (i < s.size() && isspace((unsigned char)s[i])) i++;
+        if (i >= s.size()) throw runtime_error("unexpected end of JSON");
+        return s[i];
+    }
+    void expect(char c) {
+        if (peek() != c) throw runtime_error(string("expected '") + c + "' at position " + to_string(i));
+        i++;
+    }
+    string str() {
+        expect('"');
+        string r;
+        while (i < s.size() && s[i] != '"') {
+            if (s[i] == '\\') i++;
+            if (i < s.size()) r += s[i++];
+        }
+        expect('"');
+        return r;
+    }
+    Node value() {
+        if (peek() == '"') return Node{false, {}, str()};
+        expect('{');
+        Node dir{true};
+        if (peek() == '}') {
+            i++;
+            return dir;
+        }
+        while (true) {
+            string name = str();
+            expect(':');
+            dir.kids[name] = value();
+            if (peek() == ',') i++;
+            else break;
+        }
+        expect('}');
+        return dir;
+    }
+};
+
+// Загрузка VFS из JSON-файла в память
+void loadVfs(const string& path) {
+    ifstream f(path);
+    if (!f) {
+        print("error: cannot open VFS: " + path);
+        return;
+    }
+    string text((istreambuf_iterator<char>(f)), istreambuf_iterator<char>());
+    try {
+        JsonParser p{text};
+        Node n = p.value();
+        if (!n.isDir) throw runtime_error("root must be an object");
+        root = n;
+        vfsName = path.substr(path.find_last_of('/') + 1);
+        vfsName = vfsName.substr(0, vfsName.rfind('.'));
+    } catch (exception& e) {
+        print("error: bad VFS file: " + string(e.what()));
+    }
+}
+
+// Поиск узла по пути (абсолютному или относительному); nullptr, если не найден
+Node* resolve(const string& path, vector<string>& result) {
+    result = (!path.empty() && path[0] == '/') ? vector<string>() : cwd;
+    size_t start = 0;
+    while (start <= path.size()) {
+        size_t end = path.find('/', start);
+        if (end == string::npos) end = path.size();
+        string part = path.substr(start, end - start);
+        if (part == "..") {
+            if (!result.empty()) result.pop_back();
+        } else if (!part.empty() && part != ".") {
+            result.push_back(part);
+        }
+        start = end + 1;
+    }
+    Node* n = &root;
+    for (auto& name : result) {
+        if (!n->isDir || !n->kids.count(name)) return nullptr;
+        n = &n->kids[name];
+    }
+    return n;
+}
 
 // Разбор строки на аргументы с поддержкой кавычек '...' и "..."
 bool parse(const string& line, vector<string>& args, string& err) {
@@ -71,9 +175,28 @@ bool execute(const string& line) {
     if (a.empty()) return true;
 
     if (a[0] == "ls" || a[0] == "cd") {
-        string s = a[0] + ": args =";
-        for (size_t i = 1; i < a.size(); i++) s += " [" + a[i] + "]";
-        print(s);
+        if (a.size() > 2) {
+            print(a[0] + ": too many arguments");
+            return false;
+        }
+        string path = a.size() == 2 ? a[1] : (a[0] == "ls" ? "." : "/");
+        vector<string> p;
+        Node* n = resolve(path, p);
+        if (!n) {
+            print(a[0] + ": no such file or directory: " + path);
+            return false;
+        }
+        if (a[0] == "cd") {
+            if (!n->isDir) {
+                print("cd: not a directory: " + path);
+                return false;
+            }
+            cwd = p;
+        } else if (!n->isDir) {
+            print(p.back());
+        } else {
+            for (auto& [name, kid] : n->kids) print(kid.isDir ? name + "/" : name);
+        }
         return true;
     }
     if (a[0] == "exit") {
@@ -101,10 +224,7 @@ void runScript(const string& path) {
         size_t p = line.find_first_not_of(" \t\r");
         if (p == string::npos || line.compare(p, 2, "//") == 0) continue;
         if (line.back() == '\r') line.pop_back();
-        if (!execute(line)) {
-            print("script stopped: error at line " + to_string(n));
-            return;
-        }
+        if (!execute(line)) print("[script] error at line " + to_string(n));
     }
 }
 
@@ -143,6 +263,7 @@ int main(int argc, char** argv) {
     print("[debug] vfs path    = " + (vfsPath.empty() ? "(not set)" : vfsPath));
     print("[debug] script path = " + (scriptPath.empty() ? "(not set)" : scriptPath));
 
+    if (!vfsPath.empty()) loadVfs(vfsPath);
     win->copy_label(("Shell emulator - VFS: " + vfsName).c_str());
     win->show();
     if (!scriptPath.empty()) runScript(scriptPath);

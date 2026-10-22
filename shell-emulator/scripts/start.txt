@@ -5,6 +5,6 @@ ls
 ls -l "my folder" 'single quoted'
 cd /home/user
 cd "dir with spaces"
-// неизвестная команда - скрипт остановится
+// ошибки: неизвестная команда и незакрытая кавычка
 unknown_cmd arg
-ls this-line-is-not-executed
+ls "unterminated
