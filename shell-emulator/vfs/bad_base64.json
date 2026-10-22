@@ -1,0 +1,12 @@
+{
+  "root": {
+    "type": "dir",
+    "children": {
+      "image.png": {
+        "type": "file",
+        "encoding": "base64",
+        "content": "@@@не base64@@@"
+      }
+    }
+  }
+}

@@ -36,6 +36,14 @@ class SplitCommandTest(unittest.TestCase):
         self.check("ls -l   # комментарий", ["ls", "-l"])
         self.check("ls a#b '#c' \\#d", ["ls", "a#b", "#c", "#d"])
 
+    def test_tilde_expansion(self):
+        self.assertEqual(
+            split_command("""ls ~ ~/docs "~" '~/x' ~user a~ \\~""", home="/home/u"),
+            ["ls", "/home/u", "/home/u/docs", "~", "~/x", "~user", "a~", "~"],
+        )
+        self.assertEqual(split_command("cd ~/a", home="/"), ["cd", "/a"])
+        self.assertEqual(split_command("cd ~"), ["cd", "~"])
+
     def test_unterminated_quotes(self):
         for line in ('ls "abc', "ls 'abc", 'ls "a\\"'):
             with self.subTest(line=line), self.assertRaises(ParseError):

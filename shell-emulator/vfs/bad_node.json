@@ -1,0 +1,16 @@
+{
+  "root": {
+    "type": "dir",
+    "children": {
+      "etc": {
+        "type": "dir",
+        "children": {
+          "link": {
+            "type": "symlink",
+            "target": "/tmp"
+          }
+        }
+      }
+    }
+  }
+}

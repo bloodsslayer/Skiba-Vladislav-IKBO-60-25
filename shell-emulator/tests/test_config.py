@@ -33,10 +33,10 @@ class ParseArgsTest(unittest.TestCase):
 
 
 class PathsTest(unittest.TestCase):
-    def test_missing_paths(self):
+    def test_missing_script(self):
+        # Путь к VFS проверяет загрузчик VFS (tests/test_vfs.py).
         errors = check_paths(Config("/no/such.json", "/no/such.vsh"))
-        self.assertEqual(len(errors), 2)
-        self.assertTrue(all("No such file or directory" in e for e in errors))
+        self.assertEqual(errors, ["--script: /no/such.vsh: No such file or directory"])
 
     def test_script_is_directory(self):
         with tempfile.TemporaryDirectory() as tmp:

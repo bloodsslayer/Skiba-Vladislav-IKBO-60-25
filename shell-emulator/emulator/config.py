@@ -47,10 +47,11 @@ def parse_args(argv=None):
 
 
 def check_paths(config):
-    """Проверяет пути из параметров; возвращает список сообщений об ошибках."""
+    """Проверяет путь к стартовому скрипту; возвращает список ошибок.
+
+    Путь к VFS проверяется при её загрузке (vfs.VFS.load).
+    """
     errors = []
-    if config.vfs is not None and not os.path.exists(config.vfs):
-        errors.append(f"--vfs: {config.vfs}: No such file or directory")
     if config.script is not None:
         if not os.path.exists(config.script):
             errors.append(f"--script: {config.script}: No such file or directory")

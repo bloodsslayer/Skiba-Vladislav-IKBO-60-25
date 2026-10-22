@@ -1,4 +1,7 @@
 {
-  "type": "dir",
-  "children": {}
+  "name": "minimal",
+  "root": {
+    "type": "dir",
+    "children": {}
+  }
 }
