@@ -7,6 +7,7 @@
 #include <FL/Fl_Text_Display.H>
 #include <cctype>
 #include <cstdlib>
+#include <fstream>
 #include <iostream>
 #include <string>
 #include <vector>
@@ -86,13 +87,46 @@ bool execute(const string& line) {
     return false;
 }
 
+// Выполнение стартового скрипта; строки, начинающиеся с //, - комментарии
+void runScript(const string& path) {
+    ifstream f(path);
+    if (!f) {
+        print("error: cannot open script: " + path);
+        return;
+    }
+    string line;
+    int n = 0;
+    while (getline(f, line)) {
+        n++;
+        size_t p = line.find_first_not_of(" \t\r");
+        if (p == string::npos || line.compare(p, 2, "//") == 0) continue;
+        if (line.back() == '\r') line.pop_back();
+        if (!execute(line)) {
+            print("script stopped: error at line " + to_string(n));
+            return;
+        }
+    }
+}
+
 void onEnter(Fl_Widget*, void*) {
     string line = input->value();
     input->value("");
     execute(line);
 }
 
-int main() {
+int main(int argc, char** argv) {
+    string vfsPath, scriptPath;
+    for (int i = 1; i < argc; i++) {
+        string a = argv[i];
+        if (a == "--vfs" && i + 1 < argc) vfsPath = argv[++i];
+        else if (a == "--script" && i + 1 < argc) scriptPath = argv[++i];
+        else {
+            cerr << "error: bad argument '" << a << "'\n"
+                 << "usage: emulator [--vfs <path>] [--script <path>]\n";
+            return 1;
+        }
+    }
+
     win = new Fl_Double_Window(800, 500);
     buf = new Fl_Text_Buffer();
     disp = new Fl_Text_Display(5, 5, 790, 455);
@@ -104,8 +138,14 @@ int main() {
     input->callback(onEnter);
     win->resizable(disp);
     win->end();
+
+    // Отладочный вывод параметров
+    print("[debug] vfs path    = " + (vfsPath.empty() ? "(not set)" : vfsPath));
+    print("[debug] script path = " + (scriptPath.empty() ? "(not set)" : scriptPath));
+
     win->copy_label(("Shell emulator - VFS: " + vfsName).c_str());
     win->show();
+    if (!scriptPath.empty()) runScript(scriptPath);
     input->take_focus();
     return Fl::run();
 }
