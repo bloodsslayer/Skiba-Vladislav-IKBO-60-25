@@ -8,7 +8,9 @@
 * склейка соседних частей: a"b c"'d' -> одно слово "ab cd";
 * пустые кавычки "" дают пустой аргумент;
 * комментарий: # в начале слова вне кавычек — остаток строки игнорируется
-  (синтаксис совпадает с комментариями Python и sh).
+  (синтаксис совпадает с комментариями Python и sh);
+* ~ в начале слова вне кавычек (~ или ~/путь) заменяется домашним
+  каталогом, если он передан в параметре home.
 """
 
 
@@ -19,7 +21,7 @@ class ParseError(Exception):
 _DQUOTE_ESCAPES = '"\\$`'
 
 
-def split_command(line):
+def split_command(line, home=None):
     words = []
     current = []
     in_word = False  # начато ли слово (нужно, чтобы "" дало пустой аргумент)
@@ -46,6 +48,10 @@ def split_command(line):
                 current, in_word = [], False
         elif ch == "#" and not in_word:
             break
+        elif (ch == "~" and not in_word and home is not None
+              and (i + 1 == n or line[i + 1] in " \t/")):
+            current.append(home.rstrip("/") if i + 1 < n and line[i + 1] == "/" else home)
+            in_word = True
         elif ch in "'\"":
             quote, in_word = ch, True
         elif ch == "\\":

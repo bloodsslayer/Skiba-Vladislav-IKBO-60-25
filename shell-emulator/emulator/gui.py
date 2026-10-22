@@ -10,6 +10,7 @@ import tkinter as tk
 
 from .config import Config, check_paths, read_script
 from .shell import SHELL_NAME, Shell
+from .vfs import VFS, VFSError
 
 SCRIPT_DELAY_MS = 150  # пауза между командами стартового скрипта
 
@@ -73,6 +74,7 @@ class Terminal:
         """Отладочный вывод параметров, затем стартовый скрипт или диалог."""
         for line in self.config.debug_lines():
             self.write(line + "\n", "debug")
+        self.load_vfs()
         errors = check_paths(self.config)
         for message in errors:
             self.write(f"{SHELL_NAME}: {message}\n", "err")
@@ -90,6 +92,23 @@ class Terminal:
             return
         self.show_prompt()
         self.run_script(lines)
+
+    def load_vfs(self):
+        """Загружает VFS в память; при ошибке остаётся пустая VFS."""
+        if not self.config.vfs:
+            self.write("[debug] VFS не задана: используется пустая VFS в памяти\n", "debug")
+            return
+        try:
+            vfs = VFS.load(self.config.vfs)
+        except VFSError as e:
+            self.write(f"{SHELL_NAME}: --vfs: {self.config.vfs}: {e}\n", "err")
+            self.write(f"{SHELL_NAME}: используется пустая VFS\n", "err")
+            return
+        self.shell.set_vfs(vfs)
+        self.root.title(f"{SHELL_NAME} — VFS: {vfs.name}")
+        dirs, files = vfs.stats()
+        self.write(f"[debug] VFS '{vfs.name}' загружена в память: "
+                   f"каталогов {dirs}, файлов {files}, домашний каталог {vfs.home}\n", "debug")
 
     # --- вывод --------------------------------------------------------------
 

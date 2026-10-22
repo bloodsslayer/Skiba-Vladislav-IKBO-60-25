@@ -17,15 +17,7 @@ class ShellTestCase(unittest.TestCase):
         return "".join(text for stream, text in self.output if stream == "err")
 
 
-class StubCommandsTest(ShellTestCase):
-    def test_ls_prints_name_and_args(self):
-        status, out = self.run_line('ls -l "My Documents"')
-        self.assertEqual(status, 0)
-        self.assertEqual(out, "ls: аргументы: [-l] [My Documents]\n")
-
-    def test_cd_without_args(self):
-        self.assertEqual(self.run_line("cd")[1], "cd: аргументы: (нет аргументов)\n")
-
+class BasicCommandsTest(ShellTestCase):
     def test_unknown_command(self):
         status, _ = self.run_line("pwd")
         self.assertEqual(status, 127)
@@ -40,8 +32,8 @@ class StubCommandsTest(ShellTestCase):
         self.run_line("pwd")
         self.assertEqual(self.run_line("")[0], 127)
 
-    def test_prompt(self):
-        self.assertTrue(self.shell.prompt().endswith(":~$ "))
+    def test_prompt_with_empty_vfs(self):
+        self.assertTrue(self.shell.prompt().endswith(":/$ "))
         self.assertIn("@", self.shell.prompt())
 
 
