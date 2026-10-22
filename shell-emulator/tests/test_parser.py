@@ -31,6 +31,11 @@ class SplitCommandTest(unittest.TestCase):
     def test_empty_quotes_give_empty_argument(self):
         self.check("""cd "" ''""", ["cd", "", ""])
 
+    def test_comments(self):
+        self.check("# только комментарий", [])
+        self.check("ls -l   # комментарий", ["ls", "-l"])
+        self.check("ls a#b '#c' \\#d", ["ls", "a#b", "#c", "#d"])
+
     def test_unterminated_quotes(self):
         for line in ('ls "abc', "ls 'abc", 'ls "a\\"'):
             with self.subTest(line=line), self.assertRaises(ParseError):
