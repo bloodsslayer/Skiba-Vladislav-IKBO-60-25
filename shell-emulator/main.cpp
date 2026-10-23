@@ -1,6 +1,3 @@
-// Эмулятор командной оболочки UNIX (вариант 26)
-// Сборка: ./build.sh
-
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Input.H>
@@ -20,7 +17,6 @@ Fl_Text_Display* disp;
 Fl_Text_Buffer* buf;
 Fl_Input* input;
 
-// Узел VFS: папка (JSON-объект) или файл (JSON-строка, данные в base64)
 struct Node {
     bool isDir;
     map<string, Node> kids;
@@ -31,7 +27,6 @@ Node root{true};
 vector<string> cwd;  // текущий путь от корня
 string vfsName = "default";
 
-// Вывод строки в окно (и в консоль)
 void print(const string& s) {
     buf->append((s + "\n").c_str());
     disp->insert_position(buf->length());
@@ -47,7 +42,6 @@ string pathStr(const vector<string>& p) {
 
 string prompt() { return "user@" + vfsName + ":" + pathStr(cwd) + "$ "; }
 
-// Мини-парсер JSON: поддерживает только объекты (папки) и строки (файлы)
 struct JsonParser {
     const string& s;
     size_t i = 0;
@@ -91,7 +85,6 @@ struct JsonParser {
     }
 };
 
-// Загрузка VFS из JSON-файла в память
 void loadVfs(const string& path) {
     ifstream f(path);
     if (!f) {
@@ -111,7 +104,6 @@ void loadVfs(const string& path) {
     }
 }
 
-// Поиск узла по пути (абсолютному или относительному); nullptr, если не найден
 Node* resolve(const string& path, vector<string>& result) {
     result = (!path.empty() && path[0] == '/') ? vector<string>() : cwd;
     size_t start = 0;
@@ -134,7 +126,6 @@ Node* resolve(const string& path, vector<string>& result) {
     return n;
 }
 
-// Разбор строки на аргументы с поддержкой кавычек '...' и "..."
 bool parse(const string& line, vector<string>& args, string& err) {
     string cur;
     bool has = false;
@@ -163,7 +154,6 @@ bool parse(const string& line, vector<string>& args, string& err) {
     return true;
 }
 
-// Выполнение одной команды; возвращает false при ошибке
 bool execute(const string& line) {
     print(prompt() + line);
     vector<string> a;
@@ -210,7 +200,6 @@ bool execute(const string& line) {
     return false;
 }
 
-// Выполнение стартового скрипта; строки, начинающиеся с //, - комментарии
 void runScript(const string& path) {
     ifstream f(path);
     if (!f) {
@@ -259,7 +248,6 @@ int main(int argc, char** argv) {
     win->resizable(disp);
     win->end();
 
-    // Отладочный вывод параметров
     print("[debug] vfs path    = " + (vfsPath.empty() ? "(not set)" : vfsPath));
     print("[debug] script path = " + (scriptPath.empty() ? "(not set)" : scriptPath));
 
