@@ -5,6 +5,7 @@
 #include <cstdio>
 #include <iostream>
 #include <map>
+#include <set>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -237,12 +238,9 @@ bool is_filtered(const string &name, const string &filter)
 
 // Строит граф всех (транзитивных) зависимостей пакета start обходом
 // в глубину без рекурсии. Пакеты, содержащие filter, пропускаются.
-// Обратные рёбра (циклы) записываются в cycles. В order попадают
-// пакеты в порядке завершения обхода: сначала зависимости, потом
-// зависящий от них пакет, то есть порядок загрузки.
+// Обратные рёбра (циклы) записываются в cycles.
 Graph build_graph(const Graph &repo, const string &start,
-                  const string &filter, vector<string> &cycles,
-                  vector<string> &order)
+                  const string &filter, vector<string> &cycles)
 {
     const vector<string> no_deps;
     Graph result;
@@ -260,7 +258,6 @@ Graph build_graph(const Graph &repo, const string &start,
             found == repo.end() ? no_deps : found->second;
         if (index >= deps.size()) {
             state[name] = 2;
-            order.push_back(name);
             stack.pop_back();
             continue;
         }
@@ -282,6 +279,46 @@ Graph build_graph(const Graph &repo, const string &start,
     return result;
 }
 
+// Выводит граф на языке Graphviz (DOT).
+void print_dot(const Graph &graph, const string &start)
+{
+    cout << "digraph \"" << start << "\" {\n";
+    for (const auto &node : graph) {
+        cout << "    \"" << node.first << "\";\n";
+        for (const string &dep : node.second) {
+            cout << "    \"" << node.first << "\" -> \"" << dep
+                 << "\";\n";
+        }
+    }
+    cout << "}\n";
+}
+
+// Выводит зависимости в виде ASCII-дерева. Уже показанное поддерево
+// помечается (*), зависимость, замыкающая цикл, - (cycle).
+void print_tree(const Graph &graph, const string &name,
+                const string &prefix, set<string> &path,
+                set<string> &shown)
+{
+    const vector<string> &deps = graph.at(name);
+    path.insert(name);
+    shown.insert(name);
+    for (size_t i = 0; i < deps.size(); i++) {
+        bool last = i + 1 == deps.size();
+        const string &dep = deps[i];
+        cout << prefix << (last ? "\\-- " : "+-- ") << dep;
+        if (path.count(dep) != 0) {
+            cout << " (cycle)\n";
+        } else if (shown.count(dep) != 0) {
+            cout << (graph.at(dep).empty() ? "\n" : " (*)\n");
+        } else {
+            cout << "\n";
+            print_tree(graph, dep, prefix + (last ? "    " : "|   "),
+                       path, shown);
+        }
+    }
+    path.erase(name);
+}
+
 int main(int argc, char *argv[])
 {
     Config config;
@@ -301,15 +338,18 @@ int main(int argc, char *argv[])
             throw runtime_error("package itself matches the filter");
         }
         vector<string> cycles;
-        vector<string> order;
-        build_graph(repo, config.package, config.filter, cycles, order);
+        Graph graph = build_graph(repo, config.package, config.filter,
+                                  cycles);
 
-        cout << "Load order of " << config.package << ":\n";
-        for (size_t i = 0; i < order.size(); i++) {
-            cout << "  " << i + 1 << ". " << order[i] << "\n";
+        print_dot(graph, config.package);
+        if (config.ascii_tree) {
+            set<string> path;
+            set<string> shown;
+            cout << "\n" << config.package << "\n";
+            print_tree(graph, config.package, "", path, shown);
         }
         for (const string &cycle : cycles) {
-            cout << "Cycle detected: " << cycle << "\n";
+            cerr << "Cycle detected: " << cycle << "\n";
         }
     } catch (const exception &e) {
         cerr << "Error: " << e.what() << "\n";

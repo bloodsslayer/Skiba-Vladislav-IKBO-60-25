@@ -1,0 +1,246 @@
+digraph "python3" {
+    "debconf";
+    "debconf" -> "perl-base";
+    "dpkg";
+    "dpkg" -> "libbz2-1.0";
+    "dpkg" -> "libc6";
+    "dpkg" -> "liblzma5";
+    "dpkg" -> "libselinux1";
+    "dpkg" -> "libzstd1";
+    "dpkg" -> "zlib1g";
+    "dpkg" -> "tar";
+    "gcc-12-base";
+    "libacl1";
+    "libacl1" -> "libc6";
+    "libbz2-1.0";
+    "libbz2-1.0" -> "libc6";
+    "libc6";
+    "libc6" -> "libgcc-s1";
+    "libc6" -> "libcrypt1";
+    "libcom-err2";
+    "libcom-err2" -> "libc6";
+    "libcrypt1";
+    "libcrypt1" -> "libc6";
+    "libdb5.3";
+    "libdb5.3" -> "libc6";
+    "libexpat1";
+    "libexpat1" -> "libc6";
+    "libffi8";
+    "libffi8" -> "libc6";
+    "libgcc-s1";
+    "libgcc-s1" -> "gcc-12-base";
+    "libgcc-s1" -> "libc6";
+    "libgssapi-krb5-2";
+    "libgssapi-krb5-2" -> "libc6";
+    "libgssapi-krb5-2" -> "libcom-err2";
+    "libgssapi-krb5-2" -> "libk5crypto3";
+    "libgssapi-krb5-2" -> "libkrb5-3";
+    "libgssapi-krb5-2" -> "libkrb5support0";
+    "libk5crypto3";
+    "libk5crypto3" -> "libc6";
+    "libk5crypto3" -> "libkrb5support0";
+    "libkeyutils1";
+    "libkeyutils1" -> "libc6";
+    "libkrb5-3";
+    "libkrb5-3" -> "libc6";
+    "libkrb5-3" -> "libcom-err2";
+    "libkrb5-3" -> "libk5crypto3";
+    "libkrb5-3" -> "libkeyutils1";
+    "libkrb5-3" -> "libkrb5support0";
+    "libkrb5-3" -> "libssl3";
+    "libkrb5support0";
+    "libkrb5support0" -> "libc6";
+    "liblzma5";
+    "liblzma5" -> "libc6";
+    "libmpdec3";
+    "libmpdec3" -> "libc6";
+    "libmpdec3" -> "libgcc-s1";
+    "libmpdec3" -> "libstdc++6";
+    "libncursesw6";
+    "libncursesw6" -> "libtinfo6";
+    "libncursesw6" -> "libc6";
+    "libnsl2";
+    "libnsl2" -> "libc6";
+    "libnsl2" -> "libtirpc3";
+    "libpcre2-8-0";
+    "libpcre2-8-0" -> "libc6";
+    "libpython3-stdlib";
+    "libpython3-stdlib" -> "libpython3.10-stdlib";
+    "libpython3.10-minimal";
+    "libpython3.10-minimal" -> "libc6";
+    "libpython3.10-minimal" -> "libssl3";
+    "libpython3.10-stdlib";
+    "libpython3.10-stdlib" -> "libpython3.10-minimal";
+    "libpython3.10-stdlib" -> "media-types";
+    "libpython3.10-stdlib" -> "libbz2-1.0";
+    "libpython3.10-stdlib" -> "libc6";
+    "libpython3.10-stdlib" -> "libcrypt1";
+    "libpython3.10-stdlib" -> "libdb5.3";
+    "libpython3.10-stdlib" -> "libffi8";
+    "libpython3.10-stdlib" -> "liblzma5";
+    "libpython3.10-stdlib" -> "libmpdec3";
+    "libpython3.10-stdlib" -> "libncursesw6";
+    "libpython3.10-stdlib" -> "libnsl2";
+    "libpython3.10-stdlib" -> "libreadline8";
+    "libpython3.10-stdlib" -> "libsqlite3-0";
+    "libpython3.10-stdlib" -> "libtinfo6";
+    "libpython3.10-stdlib" -> "libtirpc3";
+    "libpython3.10-stdlib" -> "libuuid1";
+    "libreadline8";
+    "libreadline8" -> "readline-common";
+    "libreadline8" -> "libc6";
+    "libreadline8" -> "libtinfo6";
+    "libselinux1";
+    "libselinux1" -> "libc6";
+    "libselinux1" -> "libpcre2-8-0";
+    "libsqlite3-0";
+    "libsqlite3-0" -> "libc6";
+    "libssl3";
+    "libssl3" -> "libc6";
+    "libssl3" -> "debconf";
+    "libstdc++6";
+    "libstdc++6" -> "gcc-12-base";
+    "libstdc++6" -> "libc6";
+    "libstdc++6" -> "libgcc-s1";
+    "libtinfo6";
+    "libtinfo6" -> "libc6";
+    "libtirpc-common";
+    "libtirpc3";
+    "libtirpc3" -> "libc6";
+    "libtirpc3" -> "libgssapi-krb5-2";
+    "libtirpc3" -> "libtirpc-common";
+    "libuuid1";
+    "libuuid1" -> "libc6";
+    "libzstd1";
+    "libzstd1" -> "libc6";
+    "media-types";
+    "perl-base";
+    "perl-base" -> "libc6";
+    "perl-base" -> "libcrypt1";
+    "perl-base" -> "dpkg";
+    "python3";
+    "python3" -> "python3-minimal";
+    "python3" -> "python3.10";
+    "python3" -> "libpython3-stdlib";
+    "python3-minimal";
+    "python3-minimal" -> "python3.10-minimal";
+    "python3-minimal" -> "dpkg";
+    "python3.10";
+    "python3.10" -> "python3.10-minimal";
+    "python3.10" -> "libpython3.10-stdlib";
+    "python3.10" -> "media-types";
+    "python3.10-minimal";
+    "python3.10-minimal" -> "libc6";
+    "python3.10-minimal" -> "libpython3.10-minimal";
+    "python3.10-minimal" -> "libexpat1";
+    "python3.10-minimal" -> "zlib1g";
+    "readline-common";
+    "readline-common" -> "dpkg";
+    "tar";
+    "tar" -> "libacl1";
+    "tar" -> "libc6";
+    "tar" -> "libselinux1";
+    "zlib1g";
+    "zlib1g" -> "libc6";
+}
+
+python3
++-- python3-minimal
+|   +-- python3.10-minimal
+|   |   +-- libc6
+|   |   |   +-- libgcc-s1
+|   |   |   |   +-- gcc-12-base
+|   |   |   |   \-- libc6 (cycle)
+|   |   |   \-- libcrypt1
+|   |   |       \-- libc6 (cycle)
+|   |   +-- libpython3.10-minimal
+|   |   |   +-- libc6 (*)
+|   |   |   \-- libssl3
+|   |   |       +-- libc6 (*)
+|   |   |       \-- debconf
+|   |   |           \-- perl-base
+|   |   |               +-- libc6 (*)
+|   |   |               +-- libcrypt1 (*)
+|   |   |               \-- dpkg
+|   |   |                   +-- libbz2-1.0
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- libc6 (*)
+|   |   |                   +-- liblzma5
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- libselinux1
+|   |   |                   |   +-- libc6 (*)
+|   |   |                   |   \-- libpcre2-8-0
+|   |   |                   |       \-- libc6 (*)
+|   |   |                   +-- libzstd1
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- zlib1g
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   \-- tar
+|   |   |                       +-- libacl1
+|   |   |                       |   \-- libc6 (*)
+|   |   |                       +-- libc6 (*)
+|   |   |                       \-- libselinux1 (*)
+|   |   +-- libexpat1
+|   |   |   \-- libc6 (*)
+|   |   \-- zlib1g (*)
+|   \-- dpkg (*)
++-- python3.10
+|   +-- python3.10-minimal (*)
+|   +-- libpython3.10-stdlib
+|   |   +-- libpython3.10-minimal (*)
+|   |   +-- media-types
+|   |   +-- libbz2-1.0 (*)
+|   |   +-- libc6 (*)
+|   |   +-- libcrypt1 (*)
+|   |   +-- libdb5.3
+|   |   |   \-- libc6 (*)
+|   |   +-- libffi8
+|   |   |   \-- libc6 (*)
+|   |   +-- liblzma5 (*)
+|   |   +-- libmpdec3
+|   |   |   +-- libc6 (*)
+|   |   |   +-- libgcc-s1 (*)
+|   |   |   \-- libstdc++6
+|   |   |       +-- gcc-12-base
+|   |   |       +-- libc6 (*)
+|   |   |       \-- libgcc-s1 (*)
+|   |   +-- libncursesw6
+|   |   |   +-- libtinfo6
+|   |   |   |   \-- libc6 (*)
+|   |   |   \-- libc6 (*)
+|   |   +-- libnsl2
+|   |   |   +-- libc6 (*)
+|   |   |   \-- libtirpc3
+|   |   |       +-- libc6 (*)
+|   |   |       +-- libgssapi-krb5-2
+|   |   |       |   +-- libc6 (*)
+|   |   |       |   +-- libcom-err2
+|   |   |       |   |   \-- libc6 (*)
+|   |   |       |   +-- libk5crypto3
+|   |   |       |   |   +-- libc6 (*)
+|   |   |       |   |   \-- libkrb5support0
+|   |   |       |   |       \-- libc6 (*)
+|   |   |       |   +-- libkrb5-3
+|   |   |       |   |   +-- libc6 (*)
+|   |   |       |   |   +-- libcom-err2 (*)
+|   |   |       |   |   +-- libk5crypto3 (*)
+|   |   |       |   |   +-- libkeyutils1
+|   |   |       |   |   |   \-- libc6 (*)
+|   |   |       |   |   +-- libkrb5support0 (*)
+|   |   |       |   |   \-- libssl3 (*)
+|   |   |       |   \-- libkrb5support0 (*)
+|   |   |       \-- libtirpc-common
+|   |   +-- libreadline8
+|   |   |   +-- readline-common
+|   |   |   |   \-- dpkg (*)
+|   |   |   +-- libc6 (*)
+|   |   |   \-- libtinfo6 (*)
+|   |   +-- libsqlite3-0
+|   |   |   \-- libc6 (*)
+|   |   +-- libtinfo6 (*)
+|   |   +-- libtirpc3 (*)
+|   |   \-- libuuid1
+|   |       \-- libc6 (*)
+|   \-- media-types
+\-- libpython3-stdlib
+    \-- libpython3.10-stdlib (*)

@@ -1,0 +1,252 @@
+digraph "curl" {
+    "curl";
+    "curl" -> "libc6";
+    "curl" -> "libcurl4";
+    "curl" -> "zlib1g";
+    "debconf";
+    "debconf" -> "perl-base";
+    "dpkg";
+    "dpkg" -> "libbz2-1.0";
+    "dpkg" -> "libc6";
+    "dpkg" -> "liblzma5";
+    "dpkg" -> "libselinux1";
+    "dpkg" -> "libzstd1";
+    "dpkg" -> "zlib1g";
+    "dpkg" -> "tar";
+    "gcc-12-base";
+    "libacl1";
+    "libacl1" -> "libc6";
+    "libbrotli1";
+    "libbrotli1" -> "libc6";
+    "libbz2-1.0";
+    "libbz2-1.0" -> "libc6";
+    "libc6";
+    "libc6" -> "libgcc-s1";
+    "libc6" -> "libcrypt1";
+    "libcom-err2";
+    "libcom-err2" -> "libc6";
+    "libcrypt1";
+    "libcrypt1" -> "libc6";
+    "libcurl4";
+    "libcurl4" -> "libbrotli1";
+    "libcurl4" -> "libc6";
+    "libcurl4" -> "libgssapi-krb5-2";
+    "libcurl4" -> "libidn2-0";
+    "libcurl4" -> "libldap-2.5-0";
+    "libcurl4" -> "libnghttp2-14";
+    "libcurl4" -> "libpsl5";
+    "libcurl4" -> "librtmp1";
+    "libcurl4" -> "libssh-4";
+    "libcurl4" -> "libssl3";
+    "libcurl4" -> "libzstd1";
+    "libcurl4" -> "zlib1g";
+    "libdb5.3";
+    "libdb5.3" -> "libc6";
+    "libffi8";
+    "libffi8" -> "libc6";
+    "libgcc-s1";
+    "libgcc-s1" -> "gcc-12-base";
+    "libgcc-s1" -> "libc6";
+    "libgmp10";
+    "libgmp10" -> "libc6";
+    "libgnutls30";
+    "libgnutls30" -> "libc6";
+    "libgnutls30" -> "libgmp10";
+    "libgnutls30" -> "libhogweed6";
+    "libgnutls30" -> "libidn2-0";
+    "libgnutls30" -> "libnettle8";
+    "libgnutls30" -> "libp11-kit0";
+    "libgnutls30" -> "libtasn1-6";
+    "libgnutls30" -> "libunistring2";
+    "libgssapi-krb5-2";
+    "libgssapi-krb5-2" -> "libc6";
+    "libgssapi-krb5-2" -> "libcom-err2";
+    "libgssapi-krb5-2" -> "libk5crypto3";
+    "libgssapi-krb5-2" -> "libkrb5-3";
+    "libgssapi-krb5-2" -> "libkrb5support0";
+    "libhogweed6";
+    "libhogweed6" -> "libc6";
+    "libhogweed6" -> "libgmp10";
+    "libhogweed6" -> "libnettle8";
+    "libidn2-0";
+    "libidn2-0" -> "libc6";
+    "libidn2-0" -> "libunistring2";
+    "libk5crypto3";
+    "libk5crypto3" -> "libc6";
+    "libk5crypto3" -> "libkrb5support0";
+    "libkeyutils1";
+    "libkeyutils1" -> "libc6";
+    "libkrb5-3";
+    "libkrb5-3" -> "libc6";
+    "libkrb5-3" -> "libcom-err2";
+    "libkrb5-3" -> "libk5crypto3";
+    "libkrb5-3" -> "libkeyutils1";
+    "libkrb5-3" -> "libkrb5support0";
+    "libkrb5-3" -> "libssl3";
+    "libkrb5support0";
+    "libkrb5support0" -> "libc6";
+    "libldap-2.5-0";
+    "libldap-2.5-0" -> "libc6";
+    "libldap-2.5-0" -> "libgnutls30";
+    "libldap-2.5-0" -> "libsasl2-2";
+    "liblzma5";
+    "liblzma5" -> "libc6";
+    "libnettle8";
+    "libnettle8" -> "libc6";
+    "libnghttp2-14";
+    "libnghttp2-14" -> "libc6";
+    "libp11-kit0";
+    "libp11-kit0" -> "libc6";
+    "libp11-kit0" -> "libffi8";
+    "libpcre2-8-0";
+    "libpcre2-8-0" -> "libc6";
+    "libpsl5";
+    "libpsl5" -> "libidn2-0";
+    "libpsl5" -> "libc6";
+    "libpsl5" -> "libunistring2";
+    "librtmp1";
+    "librtmp1" -> "libc6";
+    "librtmp1" -> "libgmp10";
+    "librtmp1" -> "libgnutls30";
+    "librtmp1" -> "libhogweed6";
+    "librtmp1" -> "libnettle8";
+    "librtmp1" -> "zlib1g";
+    "libsasl2-2";
+    "libsasl2-2" -> "libsasl2-modules-db";
+    "libsasl2-2" -> "libc6";
+    "libsasl2-modules-db";
+    "libsasl2-modules-db" -> "libc6";
+    "libsasl2-modules-db" -> "libdb5.3";
+    "libselinux1";
+    "libselinux1" -> "libc6";
+    "libselinux1" -> "libpcre2-8-0";
+    "libssh-4";
+    "libssh-4" -> "libc6";
+    "libssh-4" -> "libgssapi-krb5-2";
+    "libssh-4" -> "libssl3";
+    "libssh-4" -> "zlib1g";
+    "libssl3";
+    "libssl3" -> "libc6";
+    "libssl3" -> "debconf";
+    "libtasn1-6";
+    "libtasn1-6" -> "libc6";
+    "libunistring2";
+    "libunistring2" -> "libc6";
+    "libzstd1";
+    "libzstd1" -> "libc6";
+    "perl-base";
+    "perl-base" -> "libc6";
+    "perl-base" -> "libcrypt1";
+    "perl-base" -> "dpkg";
+    "tar";
+    "tar" -> "libacl1";
+    "tar" -> "libc6";
+    "tar" -> "libselinux1";
+    "zlib1g";
+    "zlib1g" -> "libc6";
+}
+
+curl
++-- libc6
+|   +-- libgcc-s1
+|   |   +-- gcc-12-base
+|   |   \-- libc6 (cycle)
+|   \-- libcrypt1
+|       \-- libc6 (cycle)
++-- libcurl4
+|   +-- libbrotli1
+|   |   \-- libc6 (*)
+|   +-- libc6 (*)
+|   +-- libgssapi-krb5-2
+|   |   +-- libc6 (*)
+|   |   +-- libcom-err2
+|   |   |   \-- libc6 (*)
+|   |   +-- libk5crypto3
+|   |   |   +-- libc6 (*)
+|   |   |   \-- libkrb5support0
+|   |   |       \-- libc6 (*)
+|   |   +-- libkrb5-3
+|   |   |   +-- libc6 (*)
+|   |   |   +-- libcom-err2 (*)
+|   |   |   +-- libk5crypto3 (*)
+|   |   |   +-- libkeyutils1
+|   |   |   |   \-- libc6 (*)
+|   |   |   +-- libkrb5support0 (*)
+|   |   |   \-- libssl3
+|   |   |       +-- libc6 (*)
+|   |   |       \-- debconf
+|   |   |           \-- perl-base
+|   |   |               +-- libc6 (*)
+|   |   |               +-- libcrypt1 (*)
+|   |   |               \-- dpkg
+|   |   |                   +-- libbz2-1.0
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- libc6 (*)
+|   |   |                   +-- liblzma5
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- libselinux1
+|   |   |                   |   +-- libc6 (*)
+|   |   |                   |   \-- libpcre2-8-0
+|   |   |                   |       \-- libc6 (*)
+|   |   |                   +-- libzstd1
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   +-- zlib1g
+|   |   |                   |   \-- libc6 (*)
+|   |   |                   \-- tar
+|   |   |                       +-- libacl1
+|   |   |                       |   \-- libc6 (*)
+|   |   |                       +-- libc6 (*)
+|   |   |                       \-- libselinux1 (*)
+|   |   \-- libkrb5support0 (*)
+|   +-- libidn2-0
+|   |   +-- libc6 (*)
+|   |   \-- libunistring2
+|   |       \-- libc6 (*)
+|   +-- libldap-2.5-0
+|   |   +-- libc6 (*)
+|   |   +-- libgnutls30
+|   |   |   +-- libc6 (*)
+|   |   |   +-- libgmp10
+|   |   |   |   \-- libc6 (*)
+|   |   |   +-- libhogweed6
+|   |   |   |   +-- libc6 (*)
+|   |   |   |   +-- libgmp10 (*)
+|   |   |   |   \-- libnettle8
+|   |   |   |       \-- libc6 (*)
+|   |   |   +-- libidn2-0 (*)
+|   |   |   +-- libnettle8 (*)
+|   |   |   +-- libp11-kit0
+|   |   |   |   +-- libc6 (*)
+|   |   |   |   \-- libffi8
+|   |   |   |       \-- libc6 (*)
+|   |   |   +-- libtasn1-6
+|   |   |   |   \-- libc6 (*)
+|   |   |   \-- libunistring2 (*)
+|   |   \-- libsasl2-2
+|   |       +-- libsasl2-modules-db
+|   |       |   +-- libc6 (*)
+|   |       |   \-- libdb5.3
+|   |       |       \-- libc6 (*)
+|   |       \-- libc6 (*)
+|   +-- libnghttp2-14
+|   |   \-- libc6 (*)
+|   +-- libpsl5
+|   |   +-- libidn2-0 (*)
+|   |   +-- libc6 (*)
+|   |   \-- libunistring2 (*)
+|   +-- librtmp1
+|   |   +-- libc6 (*)
+|   |   +-- libgmp10 (*)
+|   |   +-- libgnutls30 (*)
+|   |   +-- libhogweed6 (*)
+|   |   +-- libnettle8 (*)
+|   |   \-- zlib1g (*)
+|   +-- libssh-4
+|   |   +-- libc6 (*)
+|   |   +-- libgssapi-krb5-2 (*)
+|   |   +-- libssl3 (*)
+|   |   \-- zlib1g (*)
+|   +-- libssl3 (*)
+|   +-- libzstd1 (*)
+|   \-- zlib1g (*)
+\-- zlib1g (*)
