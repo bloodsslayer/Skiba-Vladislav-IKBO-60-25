@@ -1,10 +1,12 @@
 // Инструмент визуализации графа зависимостей пакетов Ubuntu (apt).
 // Вариант 26.
 #include <fstream>
+#include <algorithm>
 #include <cstdio>
 #include <iostream>
 #include <map>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -135,6 +137,15 @@ vector<string> parse_depends(const string &line)
     return result;
 }
 
+// Добавляет ребро from -> to, если его ещё нет.
+void add_edge(Graph &graph, const string &from, const string &to)
+{
+    vector<string> &deps = graph[from];
+    if (find(deps.begin(), deps.end(), to) == deps.end()) {
+        deps.push_back(to);
+    }
+}
+
 // Разбирает индекс пакетов apt: имя пакета -> прямые зависимости.
 Graph parse_packages(const string &text)
 {
@@ -150,11 +161,121 @@ Graph parse_packages(const string &text)
                    || line.rfind("Pre-Depends:", 0) == 0) {
             string value = line.substr(line.find(':') + 1);
             for (const string &dep : parse_depends(value)) {
-                graph[current].push_back(dep);
+                add_edge(graph, current, dep);
             }
         }
     }
     return graph;
+}
+
+bool is_test_name(const string &name)
+{
+    if (name.empty()) {
+        return false;
+    }
+    for (char c : name) {
+        if (c < 'A' || c > 'Z') {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Разбирает тестовый репозиторий: строки вида "A: B C".
+// Пакеты называются большими латинскими буквами, # - комментарий.
+Graph parse_test_repo(const string &text)
+{
+    Graph graph;
+    stringstream stream(text);
+    string line;
+    int number = 0;
+    while (getline(stream, line)) {
+        number++;
+        line = trim(line.substr(0, line.find('#')));
+        if (line.empty()) {
+            continue;
+        }
+        size_t colon = line.find(':');
+        string name = trim(line.substr(0, colon));
+        if (colon == string::npos || !is_test_name(name)) {
+            throw runtime_error("bad line " + to_string(number)
+                                + " in test repository: " + line);
+        }
+        graph[name];
+        stringstream deps(line.substr(colon + 1));
+        string dep;
+        while (deps >> dep) {
+            if (!is_test_name(dep)) {
+                throw runtime_error("bad package name '" + dep
+                                    + "' on line " + to_string(number));
+            }
+            add_edge(graph, name, dep);
+        }
+    }
+    return graph;
+}
+
+Graph load_repo(const Config &config)
+{
+    if (config.test_mode) {
+        ifstream file(config.repo);
+        stringstream text;
+        text << file.rdbuf();
+        return parse_test_repo(text.str());
+    }
+    string text = download(config.repo);
+    if (text.empty()) {
+        throw runtime_error("cannot download repository: " + config.repo);
+    }
+    return parse_packages(text);
+}
+
+bool is_filtered(const string &name, const string &filter)
+{
+    return !filter.empty() && name.find(filter) != string::npos;
+}
+
+// Строит граф всех (транзитивных) зависимостей пакета start обходом
+// в глубину без рекурсии. Пакеты, содержащие filter, пропускаются.
+// Обратные рёбра (циклы) записываются в cycles.
+Graph build_graph(const Graph &repo, const string &start,
+                  const string &filter, vector<string> &cycles)
+{
+    const vector<string> no_deps;
+    Graph result;
+    map<string, int> state;  // 0 - не посещён, 1 - в стеке, 2 - готов
+    vector<pair<string, size_t>> stack;
+
+    result[start];
+    state[start] = 1;
+    stack.push_back({start, 0});
+    while (!stack.empty()) {
+        string name = stack.back().first;
+        size_t index = stack.back().second;
+        auto found = repo.find(name);
+        const vector<string> &deps =
+            found == repo.end() ? no_deps : found->second;
+        if (index >= deps.size()) {
+            state[name] = 2;
+            stack.pop_back();
+            continue;
+        }
+        stack.back().second++;
+
+        const string &dep = deps[index];
+        if (is_filtered(dep, filter)) {
+            continue;
+        }
+        result[name].push_back(dep);
+        if (state[dep] == 1) {
+            cycles.push_back(name + " -> " + dep);
+        } else if (state[dep] == 0) {
+            state[dep] = 1;
+            result[dep];
+            stack.push_back({dep, 0});
+        }
+    }
+    return result;
 }
 
 int main(int argc, char *argv[])
@@ -167,21 +288,32 @@ int main(int argc, char *argv[])
         return 1;
     }
 
-    string text = download(config.repo);
-    if (text.empty()) {
-        cerr << "Error: cannot download repository: " << config.repo
-             << "\n";
-        return 1;
-    }
-    Graph graph = parse_packages(text);
-    if (graph.count(config.package) == 0) {
-        cerr << "Error: package not found: " << config.package << "\n";
-        return 1;
-    }
+    try {
+        Graph repo = load_repo(config);
+        if (repo.count(config.package) == 0) {
+            throw runtime_error("package not found: " + config.package);
+        }
+        if (is_filtered(config.package, config.filter)) {
+            throw runtime_error("package itself matches the filter");
+        }
+        vector<string> cycles;
+        Graph graph = build_graph(repo, config.package, config.filter,
+                                  cycles);
 
-    cout << "Direct dependencies of " << config.package << ":\n";
-    for (const string &dep : graph[config.package]) {
-        cout << "  " << dep << "\n";
+        cout << "Dependency graph of " << config.package << ":\n";
+        for (const auto &node : graph) {
+            cout << "  " << node.first << ":";
+            for (const string &dep : node.second) {
+                cout << " " << dep;
+            }
+            cout << "\n";
+        }
+        for (const string &cycle : cycles) {
+            cout << "Cycle detected: " << cycle << "\n";
+        }
+    } catch (const exception &e) {
+        cerr << "Error: " << e.what() << "\n";
+        return 1;
     }
     return 0;
 }
