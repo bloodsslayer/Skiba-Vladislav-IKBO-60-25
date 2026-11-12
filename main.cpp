@@ -237,9 +237,12 @@ bool is_filtered(const string &name, const string &filter)
 
 // Строит граф всех (транзитивных) зависимостей пакета start обходом
 // в глубину без рекурсии. Пакеты, содержащие filter, пропускаются.
-// Обратные рёбра (циклы) записываются в cycles.
+// Обратные рёбра (циклы) записываются в cycles. В order попадают
+// пакеты в порядке завершения обхода: сначала зависимости, потом
+// зависящий от них пакет, то есть порядок загрузки.
 Graph build_graph(const Graph &repo, const string &start,
-                  const string &filter, vector<string> &cycles)
+                  const string &filter, vector<string> &cycles,
+                  vector<string> &order)
 {
     const vector<string> no_deps;
     Graph result;
@@ -257,6 +260,7 @@ Graph build_graph(const Graph &repo, const string &start,
             found == repo.end() ? no_deps : found->second;
         if (index >= deps.size()) {
             state[name] = 2;
+            order.push_back(name);
             stack.pop_back();
             continue;
         }
@@ -297,16 +301,12 @@ int main(int argc, char *argv[])
             throw runtime_error("package itself matches the filter");
         }
         vector<string> cycles;
-        Graph graph = build_graph(repo, config.package, config.filter,
-                                  cycles);
+        vector<string> order;
+        build_graph(repo, config.package, config.filter, cycles, order);
 
-        cout << "Dependency graph of " << config.package << ":\n";
-        for (const auto &node : graph) {
-            cout << "  " << node.first << ":";
-            for (const string &dep : node.second) {
-                cout << " " << dep;
-            }
-            cout << "\n";
+        cout << "Load order of " << config.package << ":\n";
+        for (size_t i = 0; i < order.size(); i++) {
+            cout << "  " << i + 1 << ". " << order[i] << "\n";
         }
         for (const string &cycle : cycles) {
             cout << "Cycle detected: " << cycle << "\n";
