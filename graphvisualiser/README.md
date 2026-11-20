@@ -1,13 +1,28 @@
 # depviz — визуализатор графа зависимостей apt (вариант 26)
 
-Один файл `main.cpp`, без сторонних библиотек. Индекс пакетов
+Исходный код находится в `src/main.cpp`, без сторонних библиотек. Индекс пакетов
 скачивается через `curl` и разбирается вручную.
 
 ## Сборка
 
 ```bash
-g++ -std=c++17 -Wall -Wextra -o depviz main.cpp
+make
 ```
+
+Исполняемый файл появится в `build/depviz`. Очистка результатов сборки:
+
+```bash
+make clean
+```
+
+## Тесты
+
+```bash
+make test
+```
+
+Тест использует локальный репозиторий `tests/data/test_repo.txt` и не требует
+доступа к интернету.
 
 ## Параметры
 
@@ -22,13 +37,13 @@ g++ -std=c++17 -Wall -Wextra -o depviz main.cpp
 Пример реального репозитория:
 
 ```bash
-./depviz --package curl --repo http://archive.ubuntu.com/ubuntu/dists/jammy/main/binary-amd64/Packages.gz
+./build/depviz --package curl --repo http://archive.ubuntu.com/ubuntu/dists/jammy/main/binary-amd64/Packages.gz
 ```
 
-Тестовый репозиторий — файл `test_repo.txt`, строки вида `A: B C`.
+Тестовый репозиторий — файл `tests/data/test_repo.txt`, строки вида `A: B C`.
 
 ```bash
-./depviz --test-mode --repo test_repo.txt --package A
+./build/depviz --test-mode --repo tests/data/test_repo.txt --package A
 ```
 
 ## Порядок загрузки и сравнение с apt (этап 4)
@@ -67,7 +82,7 @@ stderr.
 Картинка из DOT-описания:
 
 ```bash
-./depviz --package curl --repo http://archive.ubuntu.com/ubuntu/dists/jammy/main/binary-amd64/Packages.gz | dot -Tpng -o curl.png
+./build/depviz --package curl --repo http://archive.ubuntu.com/ubuntu/dists/jammy/main/binary-amd64/Packages.gz | dot -Tpng -o curl.png
 ```
 
 Примеры для трёх пакетов (Ubuntu 22.04, main, amd64) лежат в

@@ -1,3 +1,4 @@
 depviz
 *.dot
 *.png
+.DS_Store
