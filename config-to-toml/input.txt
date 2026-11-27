@@ -1,0 +1,5 @@
+(def timeout +003.5)
+table(
+    service => @"Каталог",
+    network => table(host => @"localhost", timeout => $timeout$),
+)
